@@ -1,26 +1,43 @@
+use std::collections::HashMap;
 use std::io;
 
 fn main() {
-    // Getting bet numbers (1 set for now)
-    let mut bet_nums = String::new();
+    // Hold the bet numbers in vector
+    let mut vec_bet_seqs: Vec<_> = Vec::new();
 
-    println!(
-        "Enter your bet sequence. Each number to be followed by a space. Press <Enter> when done."
-    );
+    // create a loop to get the bet numbers; break when 'q' encountered.
+    loop {
+        // Getting bet numbers (set by set)
+        println!(
+            "Enter your bet sequence. Each number to be followed by a space. Type 'q' to quit. Press <Enter> when done."
+        );
 
-    // Getting betting numbers from CLI
-    // TODO: Get a set of bet numbers rather than just once
-    io::stdin()
-        .read_line(&mut bet_nums)
-        .expect("Not a proper number!");
+        // Getting betting numbers from CLI
+        let mut bet_nums_input = String::new();
 
-    // Parse the string with the whitesapces and return a vector, using collect(), to strings
-    let vec_bet_nums = extract_nums(&bet_nums);
+        io::stdin()
+            .read_line(&mut bet_nums_input)
+            .expect("Not a proper number!");
+
+        // If 'q' given, break the loop and end the program, else parse into u32
+        if bet_nums_input.trim().contains("q") {
+            break; // out of the loop to finish getting bet sequences
+        } else {
+            // Parse the string with the whitesapces and return a vector, using collect(), to strings
+            let vec_bet_nums = extract_nums(&bet_nums_input); // vec_bet_nums is local scope in the if-else block only
+            vec_bet_seqs.push(vec_bet_nums);
+        }
+    }
+    println!("Bet sequences are: {:?}", vec_bet_seqs);
 
     // Getting winnng number (from CLI for now)
-    let mut winning_num = String::new();
-
     println!("Enter the winning number. Press <Enter> when done.");
+
+    let mut winning_num = String::new();
+    let mut vec_matching_win: Vec<u32> = Vec::new(); // Hold the matching winning numbers
+
+    // Prepare HashMap to store the bet numbers and their num of hits of the winning numbers
+    let mut bet_num_hits: HashMap<Vec<u32>, Vec<u32>> = HashMap::<Vec<u32>, Vec<u32>>::new();
 
     io::stdin()
         .read_line(&mut winning_num)
@@ -28,24 +45,33 @@ fn main() {
 
     let vec_winning_num = extract_nums(&winning_num);
 
-    // Compare the bet numbers with the winning numbers
-    let mut vec_matching_win: Vec<u32> = Vec::new();
+    for vec_bet_nums in &vec_bet_seqs {
+        vec_matching_win.clear(); // clear the vector for the next bet sequence
 
-    for each_bet_num in &vec_bet_nums {
-        println!("Bet num is: {}", each_bet_num);
+        // vec_bet_nums is local scope in the for loop only
+        for each_bet_num in vec_bet_nums {
+            // Match each bet number with each winning number
+            if vec_winning_num.contains(each_bet_num) {
+                vec_matching_win.push(*each_bet_num);
+            }
+        }
 
-        // match each bet number with each winning number
-        if vec_winning_num.contains(each_bet_num) {
-            vec_matching_win.push(*each_bet_num);
+        // Check if matching win exceeds 3 numbers to consider it a win
+        if vec_matching_win.len() >= 3 {
+            bet_num_hits.insert(vec_bet_nums.to_vec(), vec_matching_win.to_vec());
         }
     }
 
-    println!("Matching winning numbers are: {:?}", vec_matching_win);
+    println!(
+        "Matching winning numbers are: {:?}. You striked {} sequences!",
+        bet_num_hits,
+        bet_num_hits.len()
+    );
 }
 
 // Parse string vector into integer vector and returns a sorted vec
-fn extract_nums(delimited_list: &str) -> Vec<u32> {
-    let vec_winning_num: Vec<&str> = delimited_list.split(' ').collect();
+fn extract_nums(delimited_str: &str) -> Vec<u32> {
+    let vec_winning_num: Vec<&str> = delimited_str.split(' ').collect();
 
     let mut vec_nums: Vec<u32> = Vec::new();
 
@@ -55,8 +81,6 @@ fn extract_nums(delimited_list: &str) -> Vec<u32> {
             Ok(num) => num, // IMPORTANT! do not annotate type here else there will compilation errors!
             Err(_) => 0,    // default to zero if number cannot be parsed
         };
-
-        println!("bet num: {}", a_bet_num);
 
         vec_nums.push(a_bet_num); // store the set of u32 bet numbers in a vector
         vec_nums.sort(); // sort by ascending order
