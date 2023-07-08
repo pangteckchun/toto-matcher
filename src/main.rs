@@ -7,6 +7,9 @@ fn main() {
     // Hold the bet numbers in vector
     let mut vec_bet_seqs: Vec<_> = Vec::new();
 
+    // For storing our Bets in a proper struct
+    let mut bets = Bets::new();
+
     // create a loop to get the bet numbers; break when 'q' encountered.
     loop {
         // Getting bet numbers (set by set)
@@ -14,8 +17,8 @@ fn main() {
             "Enter your bet sequence. Each number to be followed by a space. Type 'q' to quit. Press <Enter> when done."
         );
 
-        let mut bet_nums_input = String::new(); // for storing CLI inputs
-        let mut bets = Bets::new(); // for storing our Bets in a proper struct
+        // For storing CLI inputs
+        let mut bet_nums_input = String::new();
 
         io::stdin()
             .read_line(&mut bet_nums_input)
