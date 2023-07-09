@@ -1,9 +1,14 @@
 use std::collections::HashMap;
 use std::io;
 
+use toto_num_matcher::Bets;
+
 fn main() {
     // Hold the bet numbers in vector
     let mut vec_bet_seqs: Vec<_> = Vec::new();
+
+    // For storing our Bets in a proper struct
+    let mut bets = Bets::new();
 
     // create a loop to get the bet numbers; break when 'q' encountered.
     loop {
@@ -12,18 +17,22 @@ fn main() {
             "Enter your bet sequence. Each number to be followed by a space. Type 'q' to quit. Press <Enter> when done."
         );
 
-        // Getting betting numbers from CLI
+        // For storing CLI inputs
         let mut bet_nums_input = String::new();
 
         io::stdin()
             .read_line(&mut bet_nums_input)
-            .expect("Not a proper number!");
+            .expect("Not a proper number!"); // TODO - not propgating error when non number is input
 
         // If 'q' given, break the loop and end the program, else parse into u32
         if bet_nums_input.trim().contains("q") {
             break; // out of the loop to finish getting bet sequences
         } else {
-            // Parse the string with the whitesapces and return a vector, using collect(), to strings
+            let a_bet = toto_num_matcher::str_to_u32_array(&bet_nums_input);
+            toto_num_matcher::add_bet(&mut bets, a_bet); // TODO: handle error properly
+
+            println!("bets: {:?}", bets);
+
             let vec_bet_nums = extract_nums(&bet_nums_input); // vec_bet_nums is local scope in the if-else block only
             vec_bet_seqs.push(vec_bet_nums);
         }
@@ -71,6 +80,7 @@ fn main() {
 
 // Parse string vector into integer vector and returns a sorted vec
 fn extract_nums(delimited_str: &str) -> Vec<u32> {
+    // Parse the string with the whitesapces and return a vector, using collect(), to strings
     let vec_winning_num: Vec<&str> = delimited_str.split(' ').collect();
 
     let mut vec_nums: Vec<u32> = Vec::new();
