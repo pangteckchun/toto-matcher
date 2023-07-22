@@ -53,7 +53,7 @@ pub fn add_bet(bets: &mut Bets, bet: [u32; 12]) -> Result<&Bets, &'static str> {
     } else if bets.bet_seq_6.iter().fold(0, |a, &b| a + b) == 0 {
         bets.bet_seq_6 = bet;
     } else {
-        return Err("Too many bets");
+        return Err("No more bets allowed!");
     }
 
     Ok(bets)
@@ -63,7 +63,7 @@ pub fn add_winning_seq(wins: &mut Wins, winning_nums: [u32; 12]) {
     wins.winning_seq = winning_nums;
 }
 
-pub fn calculate_wins(bets: Bets, wins: &mut Wins) -> Result<&Wins, &'static str> {
+pub fn calculate_wins(bets: Bets, wins: &mut Wins) {
     // Calculate the number of hits for each bet sequence
     let (bet_seq_1, hits) = match_bets_helper(bets.bet_seq_1, wins.winning_seq);
     if hits >= 3 {
@@ -94,8 +94,6 @@ pub fn calculate_wins(bets: Bets, wins: &mut Wins) -> Result<&Wins, &'static str
     if hits >= 3 {
         wins.won_combos.insert(bet_seq_6, hits);
     }
-
-    Ok(wins)
 }
 
 pub fn str_to_u32_array(str: &str) -> [u32; 12] {
@@ -145,12 +143,12 @@ mod tests {
         let bet_5 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
         let bet_6 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
-        add_bet(&mut bets, bet_1); // warning -ignore for now
-        add_bet(&mut bets, bet_2);
-        add_bet(&mut bets, bet_3);
-        add_bet(&mut bets, bet_4);
-        add_bet(&mut bets, bet_5);
-        add_bet(&mut bets, bet_6);
+        add_bet(&mut bets, bet_1).expect("Cannot add this bet");
+        add_bet(&mut bets, bet_2).expect("Cannot add this bet");
+        add_bet(&mut bets, bet_3).expect("Cannot add this bet");
+        add_bet(&mut bets, bet_4).expect("Cannot add this bet");
+        add_bet(&mut bets, bet_5).expect("Cannot add this bet");
+        add_bet(&mut bets, bet_6).expect("Cannot add this bet");
 
         println!("Added into bets: {:?}", bets);
 
@@ -195,13 +193,13 @@ mod tests {
 
         // Setup different bets
         let bet_1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-        add_bet(&mut bets, bet_1);
+        add_bet(&mut bets, bet_1).expect("Cannot add this bet");
 
         let bet_2 = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24];
-        add_bet(&mut bets, bet_2);
+        add_bet(&mut bets, bet_2).expect("Cannot add this bet");
 
         let bet_3 = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36];
-        add_bet(&mut bets, bet_3);
+        add_bet(&mut bets, bet_3).expect("Cannot add this bet");
 
         println!("Added into bets: {:?}\n", bets);
 

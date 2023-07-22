@@ -28,8 +28,7 @@ fn main() {
             break; // out of the loop to finish getting bet sequences
         } else {
             let a_bet = toto_num_matcher::str_to_u32_array(&bet_nums_input);
-            toto_num_matcher::add_bet(&mut bets, a_bet); // TODO: handle error properly
-
+            toto_num_matcher::add_bet(&mut bets, a_bet).expect("Cannot add this bet");
             println!("bets: {:?}", bets);
         }
     }
