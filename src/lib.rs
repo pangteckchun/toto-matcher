@@ -63,7 +63,7 @@ pub fn add_winning_seq(wins: &mut Wins, winning_nums: [u32; 12]) {
     wins.winning_seq = winning_nums;
 }
 
-pub fn calculate_wins(bets: Bets, wins: &mut Wins) {
+pub fn calculate_wins(bets: Bets, wins: &mut Wins) -> &HashMap<[u32; 12], usize> {
     // Calculate the number of hits for each bet sequence
     let (bet_seq_1, hits) = match_bets_helper(bets.bet_seq_1, wins.winning_seq);
     if hits >= 3 {
@@ -94,6 +94,8 @@ pub fn calculate_wins(bets: Bets, wins: &mut Wins) {
     if hits >= 3 {
         wins.won_combos.insert(bet_seq_6, hits);
     }
+
+    return &wins.won_combos;
 }
 
 pub fn str_to_u32_array(str: &str) -> [u32; 12] {
@@ -203,12 +205,12 @@ mod tests {
 
         println!("Added into bets: {:?}\n", bets);
 
-        calculate_wins(bets, &mut wins);
-        println!("Calculated wins: {:?}", wins);
+        let winning_combos = calculate_wins(bets, &mut wins);
+        println!("Calculated wins: {:?}", winning_combos);
 
         // Assert different winning combos
-        assert_eq!(wins.won_combos.get(&bet_1), Some(&7));
-        assert_eq!(wins.won_combos.get(&bet_2), Some(&3));
-        assert_eq!(wins.won_combos.get(&bet_3), None);
+        assert_eq!(winning_combos.get(&bet_1), Some(&7));
+        assert_eq!(winning_combos.get(&bet_2), Some(&3));
+        assert_eq!(winning_combos.get(&bet_3), None);
     }
 }

@@ -45,7 +45,7 @@ fn main() {
     let winning_seq = toto_num_matcher::str_to_u32_array(&winning_num_input);
     toto_num_matcher::add_winning_seq(&mut win, winning_seq);
 
-    let winning_bets = toto_num_matcher::calculate_wins(bets, &mut win);
+    let winning_combo = toto_num_matcher::calculate_wins(bets, &mut win);
 
-    println!("Matching winning numbers are: {:?}", winning_bets);
+    println!("Matching winning numbers are: {:?}", winning_combo);
 }
